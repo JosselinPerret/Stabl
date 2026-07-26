@@ -21,8 +21,8 @@ example notebooks to rerun the analyses on the different use cases located in th
 
 ## Abstract
 Adoption of high-content omic technologies in clinical studies, coupled with computational methods, has yielded an abundance of candidate
-biomarkers. However, translating such fndings into bona fde clinical biomarkers remains challenging. To facilitate this process, we introduce
-Stabl, a general machine learning method that identifes a sparse, reliable set of biomarkers by integrating noise injection and a data-driven signal-to- noise threshold into multivariable predictive modeling. Evaluation of Stabl on synthetic datasets and fve independent clinical studies demonstrates improved biomarker sparsity and reliability compared to commonly used
+biomarkers. However, translating such findings into bona fide clinical biomarkers remains challenging. To facilitate this process, we introduce
+Stabl, a general machine learning method that identifies a sparse, reliable set of biomarkers by integrating noise injection and a data-driven signal-to-noise threshold into multivariable predictive modeling. Evaluation of Stabl on synthetic datasets and five independent clinical studies demonstrates improved biomarker sparsity and reliability compared to commonly used
 sparsity-promoting regularization methods while maintaining predictive performance; it distills datasets containing 1,400–35,000 features down to 4–34 candidate biomarkers. Stabl extends to multi-omic integration tasks, enabling biological interpretation of complex predictive models, as it hones in on a shortlist of proteomic, metabolomic and cytometric events predicting labor onset, microbial biomarkers of pre-term birth and a pre-operative immune signature of post-surgical infections. 
 
 Full content: https://rdcu.be/du2gB
@@ -71,7 +71,7 @@ pip install git+https://github.com/gregbellan/Stabl.git@v1.0.1-lw
     a. Download Stabl:
 
     ```
-    git clone https://github.com/gregbellan/Stabl.git@stabl_lw
+    git clone -b stabl_lw https://github.com/gregbellan/Stabl.git
     ```
     b. Install requirements and Stabl:
 
@@ -80,7 +80,7 @@ pip install git+https://github.com/gregbellan/Stabl.git@v1.0.1-lw
     pip install .
     ```
 
-The general installation time is less than 10 seconds, and have been tested on mac OS and linux system.
+The general installation time is less than 10 seconds, and has been tested on macOS and Linux systems.
 
 You may need to install CMake to fully use the library. Please refer to the section [CMake installation](#cmake-installation) in full version installation for more details.
 
@@ -172,7 +172,7 @@ pip install .
 pip install numpy==1.23.2
 ```
 
-The general installation time is less than 10 seconds, and have been tested on mac OS and linux system.
+The general installation time is less than 10 seconds, and has been tested on macOS and Linux systems.
 
 > **_NOTE:_**  There is a behavior with Julia library:
 > - you can run the script in a notebook, but you need to run the import block two times. The first will throw an error and the second one will finalize the import.
@@ -209,7 +209,7 @@ unzip Sample\ Data/data.zip -d Sample\ Data/
 When using your own data, you have to provide
 
 * The preprocessed input data matrix (preferably a pandas DataFrame having column names)
-* The outcomes (preferably a pandas Series having a names)
+* The outcomes (preferably a pandas Series having a name)
 * (Input Data and outcomes should have the same indices)
 
 ## Sample Data
