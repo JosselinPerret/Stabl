@@ -28,6 +28,12 @@ implemented with an extended information criterion. This changes the guarantee
 honestly: the result is a sparse, deletion-stable predictive support, not an
 FDR-controlled estimate of the unknown biological support.
 
+Removing artificial features also changes the original features' stability
+scores: in Stabl, original and artificial columns compete inside every sparse
+fit, not only during threshold calibration. D-Stabl is consequently a
+mathematically specified redesign, not a seed-free implementation that is
+numerically equivalent to published Stabl.
+
 The recommended design, **D-Stabl**, is therefore:
 
 * exact or balanced-design stability scores over a deterministic family of
@@ -193,6 +199,9 @@ boundary.
 Equation (1) is deterministic only if all remaining choices are deterministic:
 
 * the base solver uses a deterministic coordinate/update order;
+* if the optimization problem has multiple minimizers, the returned minimizer
+  is canonical (for example, minimize a strictly convex secondary norm over
+  the primary objective's minimizer set);
 * convergence tolerances and coefficient-zero thresholds are fixed;
 * \(\Lambda\) and preprocessing are fixed;
 * ties in coefficient support, score ranking, and threshold choice have
@@ -201,7 +210,9 @@ Equation (1) is deterministic only if all remaining choices are deterministic:
 
 For selection indicators, each worker should return bitsets and the reducer
 should sum integer counts. Scores are divided by the number of blocks only
-after reduction.
+after reduction. Row-order invariance additionally requires the preprocessing
+and base solver to be row-order invariant; deterministic execution alone does
+not imply that property.
 
 ## 3. Why exact enumeration is hard
 
@@ -307,6 +318,26 @@ A concrete design objective is
 with deterministic lexicographic tie-breaking. For \(m=\lfloor n/2\rfloor\),
 blocks should be generated in complementary pairs whenever possible. Class and
 group constraints are hard constraints in (3), not post-hoc redraw rules.
+
+To make this constructive, assign each sampling unit a stable identifier and
+build a nested design one pair at a time. For even \(n\), at step \(q\), choose
+
+\[
+ I_q\in\arg\min_{I\in\Omega_m}
+ \Phi\!\left(\mathcal D_{2q-2}\cup\{I,I^c\}\right)
+\rho\,\mathbf1\{I\text{ was already used}\},
+\]
+
+then append \(I_q,I_q^c\) without changing earlier pairs. For odd \(n\), use
+two size-\(\lfloor n/2\rfloor\) disjoint blocks and rotate the omitted unit to
+minimize first-order discrepancy. A mixed-integer solver can find the step
+minimum for small problems. At larger scale, start from the least-replicated
+units and perform deterministic best-improving swaps until no swap decreases
+(3), breaking every tie by stable identifier. This coordinate-exchange
+construction is deterministic and nested but only locally optimal; report the
+achieved discrepancy, not an unproved optimality claim. Without stable sample
+identifiers, this approximate design is reproducible for a fixed row order but
+is not row-order invariant.
 
 Equation (2) is reproducible and usually covers the cohort more evenly than
 independent random draws, but it is an incomplete U-statistic. Report:
@@ -509,7 +540,8 @@ MDL tie rules above.
 Conditional on the observed data and deterministic solver:
 
 * exact equality to the uniform average over the declared admissible family;
-* row-order invariance;
+* row-order invariance if preprocessing, admissibility, and the base solver are
+  themselves row-order invariant;
 * seed independence;
 * reproducibility across worker counts;
 * no Monte Carlo error.
